@@ -4,7 +4,7 @@
   function listOfEmojis () {
     var emojiList = [], i;
     // Emojis separated by groups, since each has different code sequences
-    //
+    // http://apps.timwhitlock.info/emoji/tables/unicode
     // Emoticons
     for(i = 128512; i <= 128591; i++) {
       emojiList.push(new Cakemail.Emoji(i));
@@ -43,14 +43,14 @@
   function populateTooltip (tooltip, node, caretPosition, caretData) {
     tooltip.addContent('ul', 'tooltip__emoji-menu', 'emoji-menu', listOfEmojis().map(addEmojisToList).join(''));
     tooltip.moveTooltip();
-    $('[data-js="emoji-menu"]').children().on('click', writeEmoji(tooltip, node, caretPosition, caretData));
+    $('[data-js="emoji-menu"]').children().on('click', insertEmojiCallback(tooltip, node, caretPosition, caretData));
   }
 
   function addEmojisToList (emoji) {
     return emoji.createEmojiIcon().outerHTML;
   }
 
-  function writeEmoji (tooltip, node, caretPosition, caretData) {
+  function insertEmojiCallback (tooltip, node, caretPosition, caretData) {
     return function (event) {
       event.preventDefault();
       insertEmoji.call($(this), node, node.innerHTML, caretPosition, caretData);
@@ -59,9 +59,17 @@
   }
 
   function insertEmoji (node, nodeText, caretPosition, caretData) {
-    var modifiedData =  caretData.substring(0, caretPosition) + this.text() + caretData.substring(caretPosition);
+    var modifiedData =  caretData.substring(0, caretPosition) + wrapEmoji($(this).text()) + caretData.substring(caretPosition);
     var dataStartIndex = nodeText.indexOf(caretData);
     node.innerHTML =  nodeText.substring(0, dataStartIndex) + modifiedData + nodeText.substring(caretData.length + dataStartIndex);
+  }
+
+  function wrapEmoji (emoji) {
+    var inlineNode = document.createElement('i');
+    inlineNode.setAttribute('class', 'inserted-emoji');
+    inlineNode.innerHTML = emoji;
+
+    return inlineNode.outerHTML;
   }
 
   $('[data-js="editable-div"]').children().on('click', showTooltip);

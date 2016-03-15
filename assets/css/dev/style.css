@@ -27,6 +27,12 @@ body {
   font-style: italic;
 }
 
+/* line 11, ../../sass/layout/_editable-div.sass */
+.inserted-emoji {
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* line 1, ../../sass/module/_tooltip-emoji.sass */
 .tooltip {
   width: 222px;
